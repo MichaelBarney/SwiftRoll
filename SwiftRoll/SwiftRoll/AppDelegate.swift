@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  RapidRoll
+//  SwiftRoll
 //
 //  Created by Michael Barney on 25/02/19.
 //  Copyright © 2019 michaelbarney. All rights reserved.

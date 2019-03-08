@@ -8,14 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		D123E5F5222482A20012BF6C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D123E5F4222482A20012BF6C /* AppDelegate.swift */; };
-		D123E5F7222482A20012BF6C /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = D123E5F6222482A20012BF6C /* GameScene.sks */; };
 		D123E5FB222482A20012BF6C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D123E5FA222482A20012BF6C /* GameScene.swift */; };
 		D123E5FD222482A20012BF6C /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D123E5FC222482A20012BF6C /* GameViewController.swift */; };
 		D123E600222482A20012BF6C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D123E5FE222482A20012BF6C /* Main.storyboard */; };
 		D123E602222482A30012BF6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D123E601222482A30012BF6C /* Assets.xcassets */; };
 		D123E605222482A30012BF6C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D123E603222482A30012BF6C /* LaunchScreen.storyboard */; };
-		D123E610222482A40012BF6C /* RapidRollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D123E60F222482A40012BF6C /* RapidRollTests.swift */; };
-		D123E61B222482A40012BF6C /* RapidRollUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D123E61A222482A40012BF6C /* RapidRollUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,21 +33,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		D123E5F1222482A20012BF6C /* RapidRoll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RapidRoll.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D123E5F1222482A20012BF6C /* SwiftRoll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftRoll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D123E5F4222482A20012BF6C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D123E5F6222482A20012BF6C /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		D123E5FA222482A20012BF6C /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		D123E5FC222482A20012BF6C /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		D123E5FF222482A20012BF6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D123E601222482A30012BF6C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D123E604222482A30012BF6C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D123E606222482A30012BF6C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D123E60B222482A30012BF6C /* RapidRollTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RapidRollTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D123E60F222482A40012BF6C /* RapidRollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapidRollTests.swift; sourceTree = "<group>"; };
-		D123E611222482A40012BF6C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D123E616222482A40012BF6C /* RapidRollUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RapidRollUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D123E61A222482A40012BF6C /* RapidRollUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RapidRollUITests.swift; sourceTree = "<group>"; };
-		D123E61C222482A40012BF6C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D123E60B222482A30012BF6C /* SwiftRollTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftRollTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D123E616222482A40012BF6C /* SwiftRollUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftRollUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,9 +73,7 @@
 		D123E5E8222482A20012BF6C = {
 			isa = PBXGroup;
 			children = (
-				D123E5F3222482A20012BF6C /* RapidRoll */,
-				D123E60E222482A40012BF6C /* RapidRollTests */,
-				D123E619222482A40012BF6C /* RapidRollUITests */,
+				D123E5F3222482A20012BF6C /* SwiftRoll */,
 				D123E5F2222482A20012BF6C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -91,18 +81,17 @@
 		D123E5F2222482A20012BF6C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D123E5F1222482A20012BF6C /* RapidRoll.app */,
-				D123E60B222482A30012BF6C /* RapidRollTests.xctest */,
-				D123E616222482A40012BF6C /* RapidRollUITests.xctest */,
+				D123E5F1222482A20012BF6C /* SwiftRoll.app */,
+				D123E60B222482A30012BF6C /* SwiftRollTests.xctest */,
+				D123E616222482A40012BF6C /* SwiftRollUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D123E5F3222482A20012BF6C /* RapidRoll */ = {
+		D123E5F3222482A20012BF6C /* SwiftRoll */ = {
 			isa = PBXGroup;
 			children = (
 				D123E5F4222482A20012BF6C /* AppDelegate.swift */,
-				D123E5F6222482A20012BF6C /* GameScene.sks */,
 				D123E5FA222482A20012BF6C /* GameScene.swift */,
 				D123E5FC222482A20012BF6C /* GameViewController.swift */,
 				D123E5FE222482A20012BF6C /* Main.storyboard */,
@@ -110,33 +99,15 @@
 				D123E603222482A30012BF6C /* LaunchScreen.storyboard */,
 				D123E606222482A30012BF6C /* Info.plist */,
 			);
-			path = RapidRoll;
-			sourceTree = "<group>";
-		};
-		D123E60E222482A40012BF6C /* RapidRollTests */ = {
-			isa = PBXGroup;
-			children = (
-				D123E60F222482A40012BF6C /* RapidRollTests.swift */,
-				D123E611222482A40012BF6C /* Info.plist */,
-			);
-			path = RapidRollTests;
-			sourceTree = "<group>";
-		};
-		D123E619222482A40012BF6C /* RapidRollUITests */ = {
-			isa = PBXGroup;
-			children = (
-				D123E61A222482A40012BF6C /* RapidRollUITests.swift */,
-				D123E61C222482A40012BF6C /* Info.plist */,
-			);
-			path = RapidRollUITests;
+			path = SwiftRoll;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D123E5F0222482A20012BF6C /* RapidRoll */ = {
+		D123E5F0222482A20012BF6C /* SwiftRoll */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D123E61F222482A40012BF6C /* Build configuration list for PBXNativeTarget "RapidRoll" */;
+			buildConfigurationList = D123E61F222482A40012BF6C /* Build configuration list for PBXNativeTarget "SwiftRoll" */;
 			buildPhases = (
 				D123E5ED222482A20012BF6C /* Sources */,
 				D123E5EE222482A20012BF6C /* Frameworks */,
@@ -146,14 +117,14 @@
 			);
 			dependencies = (
 			);
-			name = RapidRoll;
+			name = SwiftRoll;
 			productName = RapidRoll;
-			productReference = D123E5F1222482A20012BF6C /* RapidRoll.app */;
+			productReference = D123E5F1222482A20012BF6C /* SwiftRoll.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D123E60A222482A30012BF6C /* RapidRollTests */ = {
+		D123E60A222482A30012BF6C /* SwiftRollTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D123E622222482A40012BF6C /* Build configuration list for PBXNativeTarget "RapidRollTests" */;
+			buildConfigurationList = D123E622222482A40012BF6C /* Build configuration list for PBXNativeTarget "SwiftRollTests" */;
 			buildPhases = (
 				D123E607222482A30012BF6C /* Sources */,
 				D123E608222482A30012BF6C /* Frameworks */,
@@ -164,14 +135,14 @@
 			dependencies = (
 				D123E60D222482A30012BF6C /* PBXTargetDependency */,
 			);
-			name = RapidRollTests;
+			name = SwiftRollTests;
 			productName = RapidRollTests;
-			productReference = D123E60B222482A30012BF6C /* RapidRollTests.xctest */;
+			productReference = D123E60B222482A30012BF6C /* SwiftRollTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D123E615222482A40012BF6C /* RapidRollUITests */ = {
+		D123E615222482A40012BF6C /* SwiftRollUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D123E625222482A40012BF6C /* Build configuration list for PBXNativeTarget "RapidRollUITests" */;
+			buildConfigurationList = D123E625222482A40012BF6C /* Build configuration list for PBXNativeTarget "SwiftRollUITests" */;
 			buildPhases = (
 				D123E612222482A40012BF6C /* Sources */,
 				D123E613222482A40012BF6C /* Frameworks */,
@@ -182,9 +153,9 @@
 			dependencies = (
 				D123E618222482A40012BF6C /* PBXTargetDependency */,
 			);
-			name = RapidRollUITests;
+			name = SwiftRollUITests;
 			productName = RapidRollUITests;
-			productReference = D123E616222482A40012BF6C /* RapidRollUITests.xctest */;
+			productReference = D123E616222482A40012BF6C /* SwiftRollUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -210,7 +181,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D123E5EC222482A20012BF6C /* Build configuration list for PBXProject "RapidRoll" */;
+			buildConfigurationList = D123E5EC222482A20012BF6C /* Build configuration list for PBXProject "SwiftRoll" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -223,9 +194,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D123E5F0222482A20012BF6C /* RapidRoll */,
-				D123E60A222482A30012BF6C /* RapidRollTests */,
-				D123E615222482A40012BF6C /* RapidRollUITests */,
+				D123E5F0222482A20012BF6C /* SwiftRoll */,
+				D123E60A222482A30012BF6C /* SwiftRollTests */,
+				D123E615222482A40012BF6C /* SwiftRollUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -236,7 +207,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D123E600222482A20012BF6C /* Main.storyboard in Resources */,
-				D123E5F7222482A20012BF6C /* GameScene.sks in Resources */,
 				D123E602222482A30012BF6C /* Assets.xcassets in Resources */,
 				D123E605222482A30012BF6C /* LaunchScreen.storyboard in Resources */,
 			);
@@ -273,7 +243,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D123E610222482A40012BF6C /* RapidRollTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,7 +250,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D123E61B222482A40012BF6C /* RapidRollUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		D123E60D222482A30012BF6C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D123E5F0222482A20012BF6C /* RapidRoll */;
+			target = D123E5F0222482A20012BF6C /* SwiftRoll */;
 			targetProxy = D123E60C222482A30012BF6C /* PBXContainerItemProxy */;
 		};
 		D123E618222482A40012BF6C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D123E5F0222482A20012BF6C /* RapidRoll */;
+			target = D123E5F0222482A20012BF6C /* SwiftRoll */;
 			targetProxy = D123E617222482A40012BF6C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -442,12 +410,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3X7H6J3K9R;
-				INFOPLIST_FILE = RapidRoll/Info.plist;
+				INFOPLIST_FILE = SwiftRoll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.michaelbarney.RapidRoll;
+				PRODUCT_BUNDLE_IDENTIFIER = com.michaelbarney.SwiftRoll;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -460,12 +428,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3X7H6J3K9R;
-				INFOPLIST_FILE = RapidRoll/Info.plist;
+				INFOPLIST_FILE = SwiftRoll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.michaelbarney.RapidRoll;
+				PRODUCT_BUNDLE_IDENTIFIER = com.michaelbarney.SwiftRoll;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -489,7 +457,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RapidRoll.app/RapidRoll";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwiftRoll.app/SwiftRoll";
 			};
 			name = Debug;
 		};
@@ -510,7 +478,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RapidRoll.app/RapidRoll";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwiftRoll.app/SwiftRoll";
 			};
 			name = Release;
 		};
@@ -557,7 +525,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D123E5EC222482A20012BF6C /* Build configuration list for PBXProject "RapidRoll" */ = {
+		D123E5EC222482A20012BF6C /* Build configuration list for PBXProject "SwiftRoll" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D123E61D222482A40012BF6C /* Debug */,
@@ -566,7 +534,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D123E61F222482A40012BF6C /* Build configuration list for PBXNativeTarget "RapidRoll" */ = {
+		D123E61F222482A40012BF6C /* Build configuration list for PBXNativeTarget "SwiftRoll" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D123E620222482A40012BF6C /* Debug */,
@@ -575,7 +543,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D123E622222482A40012BF6C /* Build configuration list for PBXNativeTarget "RapidRollTests" */ = {
+		D123E622222482A40012BF6C /* Build configuration list for PBXNativeTarget "SwiftRollTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D123E623222482A40012BF6C /* Debug */,
@@ -584,7 +552,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D123E625222482A40012BF6C /* Build configuration list for PBXNativeTarget "RapidRollUITests" */ = {
+		D123E625222482A40012BF6C /* Build configuration list for PBXNativeTarget "SwiftRollUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D123E626222482A40012BF6C /* Debug */,

@@ -1,6 +1,6 @@
 //
 //  GameViewController.swift
-//  RapidRoll
+//  SwiftRoll
 //
 //  Created by Michael Barney on 25/02/19.
 //  Copyright © 2019 michaelbarney. All rights reserved.
@@ -17,13 +17,14 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         if let view = self.view as! SKView? {
-            // Load the SKScene from 'GameScene.sks'
-            let scene = GameScene(fileNamed: "GameScene")!;
+            // Create and init the GameScene
+            let scene = GameScene();
+            scene.size = CGSize(width: 750, height: 1334)
             scene.scaleMode = .aspectFill
+            scene.backgroundColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
             view.presentScene(scene)
             
             view.ignoresSiblingOrder = true
-            
             view.showsFPS = true
             view.showsNodeCount = true
         }

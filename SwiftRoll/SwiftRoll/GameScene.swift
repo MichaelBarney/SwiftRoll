@@ -1,6 +1,6 @@
 //
 //  GameScene.swift
-//  RapidRoll
+//  SwiftRoll
 //
 //  Created by Michael Barney on 25/02/19.
 //  Copyright © 2019 michaelbarney. All rights reserved.
@@ -11,198 +11,188 @@ import GameplayKit
 
 class GameScene: SKScene {
     
-    //Structures
-    struct paddle {
-        var midX:CGFloat;
-        var topY:CGFloat;
+    // MARK: Variables, Constants and Structs
+    //******************Game Structures************************/
+    struct paddle_structure {
+        var x:CGFloat;
+        var y:CGFloat;
     }
     struct ball_structure {
-        var midX:CGFloat;
-        var bottomY:CGFloat;
+        var x:CGFloat;
+        var y:CGFloat;
     }
 
-    //Outputs
-    var personDoing:CGFloat = 0;
-    
-    //Inputs
-    var velocity:CGFloat = 0;
-    
-    //Game Constants
+    /******************Game Constants*******************/
     let paddleHeight:CGFloat = 30;
     let paddleWidth:CGFloat = 200;
     var ballHeight:CGFloat = 75;
     let baseVelocity:CGFloat = 5;
     var frameWidth:CGFloat = 0;
     var frameHeight:CGFloat = 0;
+    
+    /******************Game Variables*******************/
+    var velocity:CGFloat = 0;
+    var score = 0;
+    var paddles:[paddle_structure] = [];
 
-    //General Data
-    var paddles:[paddle] = [];
+    /*******************Sprite Kit Nodes***************/
     var SKPaddles:[SKShapeNode] = [];
     let scoreLabel = SKLabelNode();
     let generationLabel = SKLabelNode();
-    
-    //General SKNodes
     private var label : SKLabelNode?
 
-    //Neural Network Variables
-    let nInputs = 9;
-    let HiddenLayerOneSize = 10;
-    let HiddenLayerTwoSize = 10;
+    /**************Neural Network Structures************/
     struct hiddenLayersStruct{
         var HL1:[NNNode];
         var HL2:[NNNode];
     }
     
-    //Genetic Algorithm Constants
-    //SEED
-    let n_genomes = 500;
-    //WEED
-    var score = 0;
-    //BREED
-    var breed_top = 10;
-    var breed_count = 50;
-    var crossover_chance = 10;
-    //MUTATE
-    var mutate_chance = 10; //by a number between 0 and 1;
-    
-    //Genetic Algorithm Variables
-    var generation = 0;
-    var top_full_genomes:[[CGFloat]] = [];
-    var new_generation_full_genomes:[[CGFloat]] = [];
-    
-    var running = false;
-    
-    struct genome {
-        //Score
-        var score = 0;
-        
-        var doing:CGFloat = 0.5;
+    /**************Neural Network Constants************/
+    let nInputs = 9;
+    let HiddenLayerOneSize = 10;
+    let HiddenLayerTwoSize = 10;
 
-        //Ball data
-        var ball:ball_structure? = nil
-        //Ball SKNode
-        var SKball:SKShapeNode?;
+    /**************Genetic Algorithm Structures************/
+    struct genome {
+        var doing:CGFloat = 0.5; //the final output of the genome, determining if it goes left, right or doesn't move
+        var ball:ball_structure? = nil  //Ball data
+        var SKball:SKShapeNode?;    //Ball SKNode
+
+        
         //Neural Network
         var hiddenLayers:hiddenLayersStruct?
         var outputNode:NNNode?;
-        //Ball Color
-        var color:[CGFloat];
-        //Full Genome
-        var fullGenome:[CGFloat];
-        var isActive:Bool;
+        
+        var color:[CGFloat]; //Ball Color
+        var fullGenome:[CGFloat]; //The collection of all of the genome's weight, biases and color
+        var isActive:Bool; //If the given genome is still active
     }
-    var genomes:[genome] = [];
+    /**************Genetic Algorithm Constants************/
+    let n_genomes = 250;  //number of genomes per generation
+    var breed_top = 10;   //how many genomes will be kept
+    var breed_count = 25; //how many genomes each top genome will generate (including itself)
+                          //ATTENTION! n_genomes must be equal to breed_top * breed_count
 
+    var crossover_chance = 50; //the chance (0 to 100) of a crossover happening
+    let mutate_chance = 80;    //the chance (0 to 100) of a mutation happening
+    let mutationRange:CGFloat = 2 //by how much a gene can be added by in a mutation
     
-    //INIT
+    /**************Genetic Algorithm Variables************/
+    var generation = 0; //current generation
+    var top_full_genomes:[[CGFloat]] = []; //the best genomes in a generation
+    var new_generation_full_genomes:[[CGFloat]] = []; //the new genomes on the next generation
+    var genomes:[genome] = []; //the current genomes being played
+    var killed = 0; //number of killed genomes
+
+    /**************Manual Control Variables************/
+    var playerOutput:CGFloat = 0;
+    
+    /**************Initialization************/
+    // MARK: Initialization
+    //Called when the scene is presented, normally only once
     override func didMove(to view: SKView) {
-        //Init Scene
-        self.backgroundColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+        //Init Dimensions
         frameWidth = self.frame.width;
         frameHeight = self.frame.height;
         
-        let data_queue = DispatchQueue(label: "data_queue");
-        data_queue.async {
-            while self.running == true {
-                self.updateData();
-            }
-        }
-        
+        //Initialize the Game
         re_init();
     }
     
+    //Function called to initialize a generation
     func re_init(){
-        genomes = [];
-        
-        //General Inits
-        score = 0;
-        velocity = baseVelocity;
-        scoreLabel.position = CGPoint(x: 0, y: frameHeight/2 - 60);
-        scoreLabel.text = "0";
+        //Init SKNode properties that don't change
+        scoreLabel.position = CGPoint(x: frameWidth/2, y: frameHeight - 60);
         scoreLabel.fontSize = 50;
         self.addChild(scoreLabel);
         
-        //Genenetic Algorithm Initializers
-        generationLabel.position = CGPoint(x: 0, y: 0);
-        generationLabel.text = "Generation: \(generation)";
+        generationLabel.position = CGPoint(x: frameWidth/2, y: frameHeight/2);
         generationLabel.fontSize = 50;
         self.addChild(generationLabel);
         
-        //CROSSOVER;
-        if (generation != 0){
-            new_generation_full_genomes = [];
+        genomes = []; //clean the genomes array
+        
+        //Initialize the game's variables to its base values
+        score = 0;
+        velocity = baseVelocity;
+        scoreLabel.text = "0";
+        killed = 0;
+        
+        //GENETIC ALGORITHM
+        generationLabel.text = "Generation: \(generation)";
+        if (generation != 0){ //If it's not the first generation
+            new_generation_full_genomes = []; //Start with a clean array of the next genomes
             for (i, _) in top_full_genomes.enumerated(){
-                //For Each Top Genome, Find "breed_count" Pairs
+                //For Each Top Genome, find "breed_count" pairs
                 var paired = 0;
                 while paired < breed_count {
-                    if paired != 0{
+                    if paired == 0 { //We let the first pairing be just the entire "good" genome
+                        new_generation_full_genomes.append(top_full_genomes[i]);
+                    }
+                    else { //If it's not the first pairing
                         //select a random full_genome
                         let x = Int.random(in: 0...top_full_genomes.count - 1);
                         let to_pair = top_full_genomes[x];
-                        //and for each gene in the full_genome
                         var new_genome = top_full_genomes[i];
+                        
+                        //iterate between each gene in the full_genome
                         for j in 0...top_full_genomes[i].count - 1{
+                            //CROSSOVER
+                            //A crossover will switch with the random full_genome a given gene
                             let to_pair_gene = to_pair[j];
-                            //now, we have a setted chance that a crossover will occur
                             var dice = Int.random(in: 0...100);
-                            if dice < crossover_chance{
+                            if dice < crossover_chance{ //See if a crossover should occur
                                 //Crossover Will Happen
                                 new_genome[j] = to_pair_gene;
                             }
                             
                             //Mutation
+                            //A mutation will alter in some capacity a gene, by adding it with a random number
                             dice = Int.random(in: 0...100);
-                            if dice < mutate_chance{
+                            if dice < mutate_chance{ //See if a mutation should occur
                                 //Mutation Will Happen
-                                let mutationValue = CGFloat.random(in: 0.1 ... 1.5)
-                                new_genome[i] = new_genome[i] * mutationValue;
+                                new_genome[i] += CGFloat.random(in: -mutationRange...mutationRange);
                             }
                             
                         }
+                        
                         //Add the new genome to the next batch
                         new_generation_full_genomes.append(new_genome)
-                    }
-                    else{
-                        new_generation_full_genomes.append(top_full_genomes[i]);
                     }
                     paired += 1;
                     
                     
                 }
-                print(new_generation_full_genomes.count);
             }
-            
-            //Now we have our new genomes, but it doesnt have substance to run yet, we need to decode the genes
-            running = true;
         }
+        top_full_genomes = []; //clean the top genomes array for the next generation to use
 
-        top_full_genomes = [];
+        //Now we have our new genome array, but they are not playable just yet, we need to decode the genes
+
         
-        
-        //CREATE THE BALLS BASED ON GENES
+        //CREATE THE PLAYABLE GENOMES BASED ON ALTERED GENES
         for i in 0...n_genomes - 1 {
-            //Init Ball
-            //Sprite Ball
+            //Sprite
             let SKball = SKShapeNode(circleOfRadius: ballHeight/2)
             SKball.lineWidth = 0;
             SKball.position.y = self.frame.height/2;
             SKball.position.x = 0;
             self.addChild(SKball);
-            //Data Ball
-            let ball = ball_structure(midX: 0, bottomY: self.frame.height/2 - ballHeight - 1)
             
+            //Data
+            let ball = ball_structure(x: frameWidth/2, y: self.frame.height - ballHeight - 1)
             
-            //Neural Network
-            //If it is the first generation, things will be completely random
+            //Neurons
+            //If it is the first generation, weights and bias will be completely random numbers from -mutationRange to mutationRange
             if generation == 0 {
                 //Init Hidden Layer 1
                 var HL1:[NNNode] = [];
                 for _ in 0...HiddenLayerOneSize - 1{
                     var randomWeights:[CGFloat] = [];
                     for _ in 0...nInputs - 1{
-                        randomWeights.append(CGFloat.random(in: -1...1));
+                        randomWeights.append(CGFloat.random(in: -mutationRange...mutationRange));
                     }
-                    let randomBias = CGFloat.random(in: -1...1);
+                    let randomBias = CGFloat.random(in: -mutationRange...mutationRange);
                     let myNode = NNNode(weights: randomWeights, bias: randomBias);
                     HL1.append(myNode);
                 }
@@ -211,9 +201,9 @@ class GameScene: SKScene {
                 for _ in 0...HiddenLayerTwoSize - 1{
                     var randomWeights:[CGFloat] = [];
                     for _ in 0...HiddenLayerOneSize - 1{
-                        randomWeights.append(CGFloat.random(in: -1...1));
+                        randomWeights.append(CGFloat.random(in: -mutationRange...mutationRange));
                     }
-                    let randomBias = CGFloat.random(in: -1...1);
+                    let randomBias = CGFloat.random(in: 0...1);
                     let myNode = NNNode(weights: randomWeights, bias: randomBias);
                     HL2.append(myNode);
                 }
@@ -222,47 +212,55 @@ class GameScene: SKScene {
                 //Init Output Layer
                 var randomWeights:[CGFloat] = [];
                 for _ in 0...HiddenLayerTwoSize - 1{
-                    randomWeights.append(CGFloat.random(in: -1...1));
+                    randomWeights.append(CGFloat.random(in: -mutationRange...mutationRange));
                 }
-                let randomBias = CGFloat.random(in: -1...1);
+                let randomBias = CGFloat.random(in: -mutationRange...mutationRange);
                 let outputNode = NNNode(weights: randomWeights, bias: randomBias);
                 
                 //GENERATE THE FIRST FULL GENOME
+                //It's made up of:
+                //Color + H1 Weights + H1 Bias + H2 Weights + H2 Bias + Output Weight + Output Bias
                 var fullGenome:[CGFloat] = [];
                 
+                //First we add the ball's color
                 var color:[CGFloat] = []
                 for _ in 0...2{
-                    fullGenome.append(CGFloat.random(in: 0...1));
-                    color.append(CGFloat.random(in: 0...1));
+                    let color_value = CGFloat.random(in: 0...1);
+                    fullGenome.append(color_value);
+                    color.append(color_value);
                 }
-                
                 SKball.fillColor = UIColor(red: color[0], green: color[1], blue: color[2], alpha: 1);
                 
-                //Color + H1 Weights + H1 Bias + H2 Weights + H2 Bias + Output Weight + Output Bias
+                //Then fill up the Hidden Layer 1 Weights and Bias
                 for n in HL1{
                     for weight in n.weights{
                         fullGenome.append(weight);
                     }
                     fullGenome.append(n.bias);
                 }
+                
+                //Then fill up the Hidden Layer 2 Weights and Bias
                 for n in HL2{
                     for weight in n.weights{
                         fullGenome.append(weight);
                     }
                     fullGenome.append(n.bias);
                 }
+                
+                //Finally fill up the output Node Weights and Bias
                 for weight in outputNode.weights{
                     fullGenome.append(weight);
                 }
                 fullGenome.append(outputNode.bias);
                 
-                print("CREATED THE FULL GENOME: \(fullGenome.count)");
-                
-                genomes.append(genome(score: 0, doing: 0.5, ball: ball, SKball: SKball, hiddenLayers: hiddenLayers, outputNode: outputNode, color: color, fullGenome: fullGenome, isActive: true));
+                //With this, we can create a playable genome
+                genomes.append(genome(doing: 0.5, ball: ball, SKball: SKball, hiddenLayers: hiddenLayers, outputNode: outputNode, color: color, fullGenome: fullGenome, isActive: true));
             }
-            //else, we need to decode those genomes
+                
+            //If it's not the first generation, we need to decode those genomes
             else{
-                 //Color + H1 Weights + H1 Bias + H2 Weights + H2 Bias + Output Weight + Output Bias
+                //The full genome array is composed in the following manner
+                //Color + H1 Weights + H1 Bias + H2 Weights + H2 Bias + Output Weight + Output Bias
                 var selected_full_genome = new_generation_full_genomes[i];
                 var cursor = 0; //This will help navigate the genome, starting in index 0
                 
@@ -276,19 +274,13 @@ class GameScene: SKScene {
                 
                 //Next, its the first hidden leyer, with weights and biases
                 var HL1:[NNNode] = [];
-                var before_cursor = cursor;
                 for _ in 0...HiddenLayerOneSize - 1{
                     //Decode Weights
                     let weight_index_start = cursor;
                     let number_of_weights = nInputs;
                     let weight_index_end = cursor + (number_of_weights - 1);
                     var weights:[CGFloat] = [];
-                    print("MAKING H1");
-                    print("Count: \(selected_full_genome.count)");
-                    print("Cursor: \(cursor)");
-                    print("End: \(weight_index_end)");
                     for x in weight_index_start...weight_index_end {
-                        print(x);
                         weights.append(selected_full_genome[x]);
                     }
                     //Decode Bias
@@ -298,24 +290,17 @@ class GameScene: SKScene {
                     
                     let myNode = NNNode(weights: weights, bias: bias);
                     HL1.append(myNode);
-                    print("Final cursor: \(cursor)");
                 }
                 
                 //Now the second hidden layer
                 var HL2:[NNNode] = [];
-                before_cursor = cursor;
-                for h in 0...HiddenLayerTwoSize - 1{
+                for _ in 0...HiddenLayerTwoSize - 1{
                     //Decode Weights
                     let weight_index_start = cursor;
                     let number_of_weights = HiddenLayerTwoSize;
                     let weight_index_end = cursor + (number_of_weights - 1);
                     var weights:[CGFloat] = [];
-                    print("MAKING H2");
-                    print("Count: \(selected_full_genome.count)");
-                    print("Cursor: \(cursor)");
-                    print("End: \(weight_index_end)");
                     for x in weight_index_start...weight_index_end {
-                        print(x);
                         weights.append(selected_full_genome[x]);
                     }
                     //Decode Bias
@@ -329,17 +314,11 @@ class GameScene: SKScene {
                 
                 //Finally, the output
                 //Decode Weights
-                before_cursor = cursor;
                 let weight_index_start = cursor;
                 let number_of_weights = HiddenLayerTwoSize;
                 let weight_index_end =  cursor + (number_of_weights - 1);
                 var weights:[CGFloat] = [];
-                print("MAKING OUTPUT");
-                print("Count: \(selected_full_genome.count)");
-                print("Cursor: \(cursor)");
-                print("End: \(weight_index_end)");
                 for x in weight_index_start...weight_index_end {
-                    print(x);
                     weights.append(selected_full_genome[x]);
                 }
                 //Decode Bias
@@ -350,174 +329,169 @@ class GameScene: SKScene {
                 
                 //Now create the node
                 let hiddenLayers = hiddenLayersStruct(HL1: HL1, HL2: HL2);
-                genomes.append(genome(score: 0, doing: 0.5, ball: ball, SKball: SKball, hiddenLayers: hiddenLayers, outputNode: outputNode, color: color, fullGenome: selected_full_genome, isActive: true));
+                genomes.append(genome(doing: 0.5, ball: ball, SKball: SKball, hiddenLayers: hiddenLayers, outputNode: outputNode, color: color, fullGenome: selected_full_genome, isActive: true));
             }
         }
         
-        //Init Paddles
+        //Initialize the Moving Paddles
         paddles = [];
         SKPaddles = [];
-        for i in 0...2{
-            let randomX = CGFloat(Int.random(in: -5 ... 5)) * (self.frame.width - 200)/10;
-            
-            //SpritePaddles
+        for i in 0...2{ //3 paddles
+            //Paddle Sprite Node
+            let randomX = CGFloat.random(in: paddleWidth/2...(frameWidth - paddleWidth/2)); //random x position
             let SKPaddle = SKShapeNode(rectOf: CGSize(width: paddleWidth, height: paddleHeight));
             SKPaddle.lineWidth = 0;
             SKPaddle.fillColor = #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1);
-            
-            SKPaddle.position.y = -CGFloat(i*500);
+            SKPaddle.position.y = -CGFloat(i*500); //each distanced by 500 points
             SKPaddle.position.x = randomX;
             SKPaddles.append(SKPaddle);
-            self.addChild(SKPaddle);
-            print("added new paddle")
+            self.addChild(SKPaddle); //add paddle to scene
             
-            //Data Paddles
-            let p = paddle(midX: randomX, topY: SKPaddle.position.y + paddleHeight/2);
+            //Paddle Daya
+            let p = paddle_structure(x: randomX, y: SKPaddle.position.y);
             paddles.append(p);
         }
     }
     
-    //Manual Controls
-    func touchDown(atPoint pos : CGPoint) {
-        if pos.x > 0 {
-            personDoing = 1;
-        }
-        else{
-            personDoing = -1;
-        }
-    }
-    func touchUp(atPoint pos : CGPoint) {
-        personDoing = 0;
-    }
     
-    //Frame Update
+    /**************Game Updates************/
+    //Update the game's data based on the neural network
+    // MARK: Update Data
     func updateData(){
+        //Iterate between each playable genome
         for (i, _) in genomes.enumerated(){
             var g = genomes[i];
-            if (g.isActive == true){
-                /***************Neural Network Begin*************/
+            if (g.isActive == true){ //If the genome is still active
+                //Update Input Array
+                //These values are all between 0 and 1
                 let myInputs:[CGFloat] = [
-                    g.ball!.bottomY/(frameHeight/2),
-                    g.ball!.midX/(frameWidth/2),
-                    paddles[0].midX/(frameWidth/2),
-                    paddles[0].topY/(frameHeight/2),
-                    paddles[1].midX/(frameWidth/2),
-                    paddles[1].topY/(frameHeight/2),
-                    paddles[2].midX/(frameWidth/2),
-                    paddles[2].topY/(frameHeight/2),
+                    g.ball!.y/frameHeight,
+                    g.ball!.x/frameWidth,
+                    paddles[0].x/frameWidth,
+                    paddles[0].y/frameHeight,
+                    paddles[1].x/frameWidth,
+                    paddles[1].y/frameHeight,
+                    paddles[2].x/frameWidth,
+                    paddles[2].y/frameHeight,
                     velocity / (1 + abs(velocity))
                 ];
                 
-                //First Layer
+                //Calculate the first layer of the neural network
                 var HL1Results:[CGFloat] = [];
                 for node in g.hiddenLayers!.HL1{
                     HL1Results.append(node.calculate(inputs: myInputs));
                 }
                 
-                //Second Layer
+                //Calculate the second layer of the neural network
                 var HL2Results:[CGFloat] = [];
                 for node in g.hiddenLayers!.HL2{
                     HL2Results.append(node.calculate(inputs: HL1Results));
                 }
                 
-                //Output Layer
+                //Calculate the output layer of the neural network
                 let output = g.outputNode!.calculate(inputs: HL2Results);
                 g.doing = output;
-                /**************Neural Network END************/
                 
-                /*****COLLISION DETECTION****/
-                //Check If Dead
-                if(g.ball!.bottomY + ballHeight > frameHeight/2 || g.ball!.bottomY < -frameHeight/2){
-                    g.SKball?.removeFromParent();
-                    g.isActive = false;
-                    g.score = score;
-                    killed += 1;
+                //Check if ball reached the upper or lower limits of the screen
+                if(g.ball!.y + ballHeight/2 > frameHeight ||
+                   g.ball!.y - ballHeight/2 < 0){
+                    
+                    g.SKball?.removeFromParent(); //remove the sprite from the screen
+                    g.isActive = false; //make the genome inactive
+                    killed += 1; //increase the number of killed genomes
                     genomes[i] = g;
                     
-                    print(killed);
-                    //Check if it was a good genome
+                    //Check if it was a good genome, to be breed
                     if killed > n_genomes - breed_top{
-                        print("GOOD SOLDIER!");
                         top_full_genomes.append(g.fullGenome);
-                        print(top_full_genomes);
                     }
                     
-                    //All Killed, Reset
+                    //Check if all genomes have been killed, to end the generation
                     if killed >= n_genomes{
-                        velocity = baseVelocity;
-                        killed = 0;
                         for child in self.children{
-                            child.removeFromParent();
+                            child.removeFromParent(); //clear entire screen
                         }
-                        generation += 1;
-                        re_init();
+                        generation += 1; //increase the generation number
+                        re_init(); //re-initialize
                     }
                 }
                 else{
-                    g.ball!.bottomY -= velocity;
-                    if (g.doing <= -0.33 && g.ball!.midX - ballHeight/2 > -frameWidth/2){
-                        g.ball!.midX -= velocity;
+                    //Update Positions
+                    g.ball!.y -= velocity; //Ball Gravity
+                    if (g.doing <= 0.33 && g.ball!.x - ballHeight/2 > 0){ //Ball go Left
+                        g.ball!.x -= velocity;
                     }
-                    else if (g.doing >= 0.33 && g.ball!.midX + ballHeight/2 < frameWidth/2){
-                        g.ball!.midX += velocity;
+                    else if (g.doing >= 0.66 && g.ball!.x + ballHeight/2 < frameWidth){ //Ball go Right
+                        g.ball!.x += velocity;
                     }
+                    //Iterate each paddle
                     for (i, _) in paddles.enumerated(){
-                        //Check if Paddle Ended
-                        if paddles[i].topY - paddleHeight >= self.frame.height/2{
-                            print("ended");
-                            print(i);
-                            print(mod((i - 1), SKPaddles.count));
-                            let randomX = CGFloat(Int.random(in: -5 ... 5)) * (self.frame.width - paddleWidth)/10;
-                            paddles[i].midX = randomX;
-                            paddles[i].topY = paddles[mod((i - 1), paddles.count)].topY - 500;
-                            
-                        }
-                        
                         //check if collides with ball;
-                        if  paddles[i].topY >= (g.ball?.bottomY)! &&
-                            paddles[i].topY - paddleHeight <= (g.ball?.bottomY)! + ballHeight &&
-                            paddles[i].midX - paddleWidth/2 <= (g.ball?.midX)! + ballHeight/2 &&
-                            paddles[i].midX + paddleWidth/2  >= (g.ball?.midX)!  - ballHeight/2{
-                            g.ball?.bottomY = paddles[i].topY;
+                        if  paddles[i].y + paddleHeight/2 >= (g.ball?.y)! - ballHeight/2 &&
+                            paddles[i].y - paddleHeight/2 <= (g.ball?.y)! + ballHeight/2 &&
+                            paddles[i].x - paddleWidth/2 <= (g.ball?.x)! + ballHeight/2 &&
+                            paddles[i].x + paddleWidth/2  >= (g.ball?.x)!  - ballHeight/2{
+                            g.ball?.y = paddles[i].y + paddleHeight/2 + ballHeight/2; //ball collision with paddle
                         }
                     }
-                    //Update Drawing
-                    //Ball
-                    genomes[i] = g;
+                    genomes[i] = g; //save changes
                 }
             }
         }
+        //Update Paddle Data
+        for (i, _) in paddles.enumerated(){
+            paddles[i].y += velocity;
+            
+            //Check if Paddle Ended
+            if paddles[i].y - paddleHeight/2 >= self.frame.height{
+                let randomX = CGFloat.random(in: paddleWidth/2...(frameWidth - paddleWidth/2));
+                paddles[i].x = randomX; //update paddle x to random number
+                paddles[i].y = paddles[mod((i - 1), paddles.count)].y - 500; //update paddle y
+            }
+        }
+        score += 1;
     }
     
+    //Update the SK Nodes positions based on the data
+    // MARK: Draw Data
     func drawData(){
         //Balls
         for (i, _) in genomes.enumerated(){
-            genomes[i].SKball!.position.x = (genomes[i].ball?.midX)!;
-            genomes[i].SKball!.position.y = (genomes[i].ball?.bottomY)! + ballHeight/2;
+            genomes[i].SKball!.position.x = (genomes[i].ball?.x)!;
+            genomes[i].SKball!.position.y = (genomes[i].ball?.y)!;
         }
         //Paddles
         for (i, _) in paddles.enumerated(){
-            paddles[i].topY += velocity;
-            SKPaddles[i].position.x = paddles[i].midX;
-            SKPaddles[i].position.y = paddles[i].topY - paddleHeight/2;
+            SKPaddles[i].position.x = paddles[i].x;
+            SKPaddles[i].position.y = paddles[i].y;
         }
         //Update Score
-        score += 1;
         scoreLabel.text = String(score);
     }
+    
+    //Called each frame
     override func update(_ currentTime: TimeInterval) {
-        // Calculate Positions
         updateData();
         drawData();
-       
         //Update Velocity
         velocity += 0.005;
     }
     
-    var killed = 0;
-
-    
-    //: TOUCH DETECTION
+    /**************Manual Controls************/
+    // MARK: Manual Controls
+    //Touch Handling
+    func touchDown(atPoint pos : CGPoint) {
+        if pos.x > 0 {
+            playerOutput = 1;
+        }
+        else{
+            playerOutput = 0;
+        }
+    }
+    func touchUp(atPoint pos : CGPoint) {
+        playerOutput = 0.5;
+    }
+    //Touch Detection
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
@@ -528,7 +502,8 @@ class GameScene: SKScene {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }
     
-    //: Utilitary Functions
+    /**************Utilitary Functions************/
+    // MARK: Utilitary Functions
     func mod(_ a: Int, _ n: Int) -> Int {
         precondition(n > 0, "modulus must be positive")
         let r = a % n
@@ -536,16 +511,20 @@ class GameScene: SKScene {
     }
 }
 
-
+/**************Neural Network Node Class************/
+// MARK: Neural Network Node
 class NNNode {
     var weights: [CGFloat];
     var bias:CGFloat;
     var result:CGFloat = 0;
+    
+    //Initializations
     init(weights:[CGFloat], bias:CGFloat) {
         self.weights = weights;
         self.bias = bias;
     }
     
+    //Node Foward Propagation
     func calculate(inputs:[CGFloat]) -> CGFloat{
         var sum:CGFloat = 0
         for (i, _) in inputs.enumerated(){
@@ -555,7 +534,8 @@ class NNNode {
         return self.result;
     }
     
+    //Sigmoid Function
     private func sigmoid(x: CGFloat) -> CGFloat {
-        return (2.0 / (1.0 + exp(-x))) - 1
+        return 1 / (1 + exp(-x))
     }
 }
