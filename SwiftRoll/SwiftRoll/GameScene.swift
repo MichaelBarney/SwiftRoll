@@ -66,6 +66,9 @@ class GameScene: SKScene {
         var color:[CGFloat]; //Ball Color
         var fullGenome:[CGFloat]; //The collection of all of the genome's weight, biases and color
         var isActive:Bool; //If the given genome is still active
+        
+        var standing_still_negative:CGFloat;
+        var fitness:CGFloat;
     }
     /**************Genetic Algorithm Constants************/
     let n_genomes = 250;  //number of genomes per generation
@@ -73,9 +76,9 @@ class GameScene: SKScene {
     var breed_count = 25; //how many genomes each top genome will generate (including itself)
                           //ATTENTION! n_genomes must be equal to breed_top * breed_count
 
-    var crossover_chance = 50; //the chance (0 to 100) of a crossover happening
-    let mutate_chance = 80;    //the chance (0 to 100) of a mutation happening
-    let mutationRange:CGFloat = 2 //by how much a gene can be added by in a mutation
+    var crossover_chance = 75; //the chance (0 to 100) of a crossover happening
+    let mutate_chance = 75;    //the chance (0 to 100) of a mutation happening
+    let mutationRange:CGFloat = 3 //by how much a gene can be added by in a mutation
     
     /**************Genetic Algorithm Variables************/
     var generation = 0; //current generation
@@ -108,6 +111,7 @@ class GameScene: SKScene {
         
         generationLabel.position = CGPoint(x: frameWidth/2, y: frameHeight/2);
         generationLabel.fontSize = 50;
+        generationLabel.text = "Generation: \(generation)";
         self.addChild(generationLabel);
         
         genomes = []; //clean the genomes array
@@ -119,7 +123,6 @@ class GameScene: SKScene {
         killed = 0;
         
         //GENETIC ALGORITHM
-        generationLabel.text = "Generation: \(generation)";
         if (generation != 0){ //If it's not the first generation
             new_generation_full_genomes = []; //Start with a clean array of the next genomes
             for (i, _) in top_full_genomes.enumerated(){
@@ -165,10 +168,7 @@ class GameScene: SKScene {
                 }
             }
         }
-        top_full_genomes = []; //clean the top genomes array for the next generation to use
-
         //Now we have our new genome array, but they are not playable just yet, we need to decode the genes
-
         
         //CREATE THE PLAYABLE GENOMES BASED ON ALTERED GENES
         for i in 0...n_genomes - 1 {
@@ -254,7 +254,7 @@ class GameScene: SKScene {
                 fullGenome.append(outputNode.bias);
                 
                 //With this, we can create a playable genome
-                genomes.append(genome(doing: 0.5, ball: ball, SKball: SKball, hiddenLayers: hiddenLayers, outputNode: outputNode, color: color, fullGenome: fullGenome, isActive: true));
+                genomes.append(genome(doing: 0.5, ball: ball, SKball: SKball, hiddenLayers: hiddenLayers, outputNode: outputNode, color: color, fullGenome: fullGenome, isActive: true, standing_still_negative: 0, fitness: 0));
             }
                 
             //If it's not the first generation, we need to decode those genomes
@@ -329,16 +329,35 @@ class GameScene: SKScene {
                 
                 //Now create the node
                 let hiddenLayers = hiddenLayersStruct(HL1: HL1, HL2: HL2);
-                genomes.append(genome(doing: 0.5, ball: ball, SKball: SKball, hiddenLayers: hiddenLayers, outputNode: outputNode, color: color, fullGenome: selected_full_genome, isActive: true));
+                
+                if top_full_genomes.contains(selected_full_genome){
+                    SKball.lineWidth = 3;
+                    SKball.strokeColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+                    SKball.zPosition = 2000
+                    print("IN!")
+                }
+                else{
+                    SKball.alpha = 0.3;
+                }
+                
+                genomes.append(genome(doing: 0.5, ball: ball, SKball: SKball, hiddenLayers: hiddenLayers, outputNode: outputNode, color: color, fullGenome: selected_full_genome, isActive: true, standing_still_negative: 0, fitness: 0));
             }
         }
         
+
+        
+        top_full_genomes = []; //clean the top genomes array for the next generation to use
+
         //Initialize the Moving Paddles
         paddles = [];
         SKPaddles = [];
         for i in 0...2{ //3 paddles
             //Paddle Sprite Node
-            let randomX = CGFloat.random(in: paddleWidth/2...(frameWidth - paddleWidth/2)); //random x position
+            let num_options = 3
+            let position = CGFloat(Int.random(in: 0...(num_options - 1)));
+            let distance = (frameWidth - paddleWidth)/CGFloat(num_options - 1)
+            let randomX = paddleWidth/2 +  position * distance;
+            
             let SKPaddle = SKShapeNode(rectOf: CGSize(width: paddleWidth, height: paddleHeight));
             SKPaddle.lineWidth = 0;
             SKPaddle.fillColor = #colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1);
@@ -347,7 +366,7 @@ class GameScene: SKScene {
             SKPaddles.append(SKPaddle);
             self.addChild(SKPaddle); //add paddle to scene
             
-            //Paddle Daya
+            //Paddle Data
             let p = paddle_structure(x: randomX, y: SKPaddle.position.y);
             paddles.append(p);
         }
@@ -399,19 +418,34 @@ class GameScene: SKScene {
                     g.SKball?.removeFromParent(); //remove the sprite from the screen
                     g.isActive = false; //make the genome inactive
                     killed += 1; //increase the number of killed genomes
-                    genomes[i] = g;
                     
-                    //Check if it was a good genome, to be breed
-                    if killed > n_genomes - breed_top{
-                        top_full_genomes.append(g.fullGenome);
-                    }
+                    g.fitness = CGFloat(score);
+                    
+                    genomes[i] = g; //save data
                     
                     //Check if all genomes have been killed, to end the generation
                     if killed >= n_genomes{
                         for child in self.children{
                             child.removeFromParent(); //clear entire screen
                         }
-                        generation += 1; //increase the generation number
+
+                        genomes.sort(by: { (a, b) -> Bool in
+                            a.fitness > b.fitness
+                        })
+                        
+                        //Add the top genomes and the medium genome
+                        //The worse genome can give us more diversity
+                        for (i, _) in genomes.enumerated(){
+                            print(genomes[i].fitness);
+                            if (i < breed_top - 1){
+                                top_full_genomes.append(genomes[i].fullGenome);
+                            }
+                            else if (i == genomes.count - 1){
+                                top_full_genomes.append(genomes[i].fullGenome);
+                            }
+                        }
+                        print("Top Full Genomes Count: \(top_full_genomes.count)")
+
                         re_init(); //re-initialize
                     }
                 }
@@ -423,6 +457,9 @@ class GameScene: SKScene {
                     }
                     else if (g.doing >= 0.66 && g.ball!.x + ballHeight/2 < frameWidth){ //Ball go Right
                         g.ball!.x += velocity;
+                    }
+                    else if (g.doing <= 0.33 || g.doing >= 0.66){ //standing still
+                        g.standing_still_negative += 1;
                     }
                     //Iterate each paddle
                     for (i, _) in paddles.enumerated(){
@@ -444,7 +481,10 @@ class GameScene: SKScene {
             
             //Check if Paddle Ended
             if paddles[i].y - paddleHeight/2 >= self.frame.height{
-                let randomX = CGFloat.random(in: paddleWidth/2...(frameWidth - paddleWidth/2));
+                let num_options = 3
+                let position = CGFloat(Int.random(in: 0...(num_options - 1)));
+                let distance = (frameWidth - paddleWidth)/CGFloat(num_options - 1)
+                let randomX = paddleWidth/2 +  position * distance;
                 paddles[i].x = randomX; //update paddle x to random number
                 paddles[i].y = paddles[mod((i - 1), paddles.count)].y - 500; //update paddle y
             }
