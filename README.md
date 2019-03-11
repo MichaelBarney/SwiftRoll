@@ -64,18 +64,17 @@ While there are a couple of files in the project, the main ones are:
 
 ### Navigating GameScene.swift
 It probably wasn't best practice to fit so many components (game, neural network and genetic algorithm) inside only one file. But I did so in order to be a bit less confusing navigating everything spread out into 5 different files. Yet, it does need some clarifications about the positioning of code.
-
- - _MARK: Variables, Constants and Structs_
+ - **MARK: Variables, Constants and Structs**
  At the start of the code is all structs, variables and constants used, separated by **Game**, **Neural Network** and **Genetic Algorithm**. Fiddling with the constants can give you new training configurations.
- - _MARK: Initiallization_
+ - **MARK: Initiallization**
 Here is all the code for initializing all generations of the game, it includes the creation of the SpriteKitNodes and the Genetic Algorithm's Evolution and Gene Decoding to construct Genome Neural Networks.
- - *MARK: Update Data*
+ - **MARK: Update Data**
  This is where the game itself ocurres and the players move according to it's Neural Network and collision detections occur.
-  - *MARK: Draw Data*
+  - **MARK: Draw Data**
 This takes the updated data from the game and draws it to the screen.
-  - *MARK: Manual Controls*
+  - **MARK: Manual Controls**
 This is used in case the user want's to play the game for himself, using Touchscreen controls.
-  - *MARK: Utilitary Functions*
+  - **MARK: Utilitary Functions**
 This is houses any functions that may be used throughout the code only as a primordial tool.
 
 ## Credits
