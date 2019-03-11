@@ -445,6 +445,7 @@ class GameScene: SKScene {
                             }
                         }
                         print("Top Full Genomes Count: \(top_full_genomes.count)")
+                        generation += 1; //increase the generation number
 
                         re_init(); //re-initialize
                     }
