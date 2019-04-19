@@ -1,14 +1,19 @@
+**WWDC19** scholarship submission [Accepted]
+
 # Swift Roll
 A simple artificial intelligence made in Swift to play a version of the old Nokia game "Rapid Roll", using Neural Networks and a simple Genetic Algorithm.
 
 ![AI on Generation 37](https://i.imgur.com/YbAh4yy.png)
 
-## Installation
+## App Installation
 **This project  was made to run on iOS devices (12.1) and is only able to be installed through MacOS computers.** 
  1. Download [Xcode](https://developer.apple.com/xcode/).
  2. Clone/download this folder to your computer.
  3. Open [SwiftRoll.xcodeproj](https://github.com/MichaelBarney/SwiftRoll/tree/master/SwiftRoll.xcodeproj "SwiftRoll.xcodeproj").
  4. Build the project.
+ 
+## Running the Playground
+Download and unzip [Playground/SwiftRoll.playground.zip](Playground) then open it through Xcode.
 
 ## How it works - Neural Network
 We have a total of 9 inputs nodes:
