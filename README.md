@@ -1,4 +1,4 @@
-**WWDC19** scholarship submission [Accepted]
+Accepted **WWDC19** Scholarship Submission
 
 # Swift Roll
 A simple artificial intelligence made in Swift to play a version of the old Nokia game "Rapid Roll", using Neural Networks and a simple Genetic Algorithm.
