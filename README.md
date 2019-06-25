@@ -82,6 +82,13 @@ This is used in case the user want's to play the game for himself, using Touchsc
   - **MARK: Utilitary Functions**
 This is houses any functions that may be used throughout the code only as a primordial tool.
 
+## Communication
+
+-   If you  **found a bug**, open an issue.
+-   If you  **have a feature request**, open an issue.
+-   If you  **want to contribute**, submit a pull request.
+
+
 ## Credits
 
  - [Michael Barney](https://github.com/michaelbarney)
